@@ -1,0 +1,301 @@
+[Package]
+version: 1
+depends: 
+
+[Product]
+type: netboot
+id: ica-clonezilla
+name: Clonezilla over opsi
+description: Use clonezilla to backup your clients combined with opsi-Features
+advice: Based on opsi-linux-bootimage
+version: 4.1.0.1
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup.py
+uninstallScript: 
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+pxeConfigTemplate: install3264
+
+[ProductProperty]
+type: bool
+name: askbeforeinst
+description: Should there be a confirmation dialog before start installing ?
+default: False
+
+[ProductProperty]
+type: bool
+name: mount_image_share
+description: Should a cif share be mounted? (False implies mounting a local device)
+default: True
+
+[ProductProperty]
+type: unicode
+name: imageshare
+multivalue: False
+editable: True
+description: normally auto or empty: Defaults to the opsi_images share of the depot server; if not auto or empty: smb/cifs share in the format //server/share
+values: ["", "//opsiserver/opsi_images", "auto"]
+default: ["auto"]
+
+[ProductProperty]
+type: unicode
+name: runcommand
+multivalue: False
+editable: True
+description: Clonezilla command to be executed
+values: ["", "ocs-live", "ocs-sr -g auto -e1 auto -e2 --skip-check-restorable-r --batch -r -j2 -p true restoredisk imagefile diskdevice", "ocs-sr -q2 --skip-check-restorable-s --batch -j2 -rm-win-swap-hib -i 2000 -p true savedisk imagefile diskdevice", "ocs-sr -q2 -c -j2 -z1 -i 2000 -sc -p true saveparts imagefile partdevice"]
+default: ["ocs-live"]
+
+[ProductProperty]
+type: unicode
+name: disk_number
+multivalue: False
+editable: True
+description: Number (first=1) of the disk ; if string 'diskdevice' in the runcommand it will be replaced by valid device path (eg. sda)
+values: ["1", "2"]
+default: ["1"]
+
+[ProductProperty]
+type: unicode
+name: part_number
+multivalue: False
+editable: True
+description: Number (first=1) of the partition of 'disk_number' ; if string 'partdevice' in the runcommand it will be replaced by valid device path (eg. sda1)
+values: ["1", "2", "3", "4", "5"]
+default: ["1"]
+
+[ProductProperty]
+type: unicode
+name: imagefile
+multivalue: False
+editable: True
+description: name of the imagefile ; will replace the string 'imagefile' in the runcommand
+values: ["auto", "myimagefile"]
+default: ["myimagefile"]
+
+[ProductProperty]
+type: unicode
+name: drbl_ocs_conf
+multivalue: True
+editable: True
+description: Directory for post run scripts (Entries in /etc/drbl/drbl-ocs.conf)
+values: ["", "OCS_POSTRUN_DIR=\"/home/partimag/postrun\"", "OCS_PRERUN_DIR=\"/home/partimag/prerun\""]
+default: []
+
+[ProductProperty]
+type: unicode
+name: rebootflag
+multivalue: False
+editable: False
+description: Should the Client reboot after running the script
+values: ["keepalive", "reboot", "shutdown"]
+default: ["reboot"]
+
+[ProductProperty]
+type: unicode
+name: setup_after_install
+multivalue: True
+editable: True
+description: Which opsi product(s) should we switch to setup after clonezilla work is finished ?
+values: [""]
+default: [""]
+
+[ProductProperty]
+type: unicode
+name: architecture
+multivalue: True
+editable: False
+description: Hardware type
+values: ["32bit", "64bit"]
+default: ["32bit"]
+
+[Changelog]
+ica-clonezilla (1.0)
+  * added ability to clone to local partion
+  * to use, set "imageshare" to partition (e.g., "/dev/sda3") and "mount image share" to "false"
+
+opsi-clonezilla (4.1.0.1-1) stable; urgency=low
+
+  * update drbl-2.20.11 to drbl-2.25.10
+  * update from clonezilla 3.21.13 to clonezilla 3.27.16
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 26 Jul 2018 15:00:00 +0200
+
+opsi-clonezilla (4.1.0.0-1) testing; urgency=low
+
+  * imageName property has new value: auto; sets imagename to client FQDN
+
+-- Mathias Radtke <m.radtke@uib.de> Fri, 22 Jun 2018 14:45:00 +0200
+
+opsi-clonezilla (4.0.7.2-5) stable; urgency=low
+
+  * merge from 4.0.7.1-10: nt6.py check for opsi version opsi 4.1 compatible
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 16 Jan 2018 15:00:00 +0200
+
+opsi-clonezilla (4.0.7.2-4) stable; urgency=low
+
+  * quickfix smb1 fallback
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 25 Nov 2017 15:00:00 +0200
+
+opsi-clonezilla (4.0.7.2-3) stable; urgency=low
+
+  * property imageshare normally auto or empty. If auto or empty will be the opsi_images share on the clients depot
+
+-- detlef oertel <d.oertel@uib.de>  Wed, 02 Nov 2016 15:00:00 +0200
+
+opsi-clonezilla (4.0.7.2-2) stable; urgency=low
+
+  * more logging (free -m / ls -l on mountpoint)
+
+-- detlef oertel <d.oertel@uib.de>  Mo, 22 Aug 2016 15:00:00 +0200
+
+opsi-clonezilla (4.0.7.2-1) stable; urgency=low
+
+  * adding drbl-2.20.11.tar.bz2 (xenial / opsi 4.0.7)
+  * update to clonezilla 3.21.13
+  * update perl
+  * new properties: disk_number, part_number to better support non standard disks
+  * mount image share before the libs are extracted
+
+-- detlef oertel <d.oertel@uib.de>  Thu, 18 Aug 2016 15:00:00 +0200
+
+opsi-clonezilla (4.0.7.1-1) stable; urgency=low
+
+  * adding clonezilla 3.21.10 for bootimage >= 20160517 (xenial / opsi 4.0.7)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 20 May 2016 15:00:00 +0200
+
+opsi-clonezilla (4.0.6.1-1) stable; urgency=low
+
+  * use credential file for opsi_depot_rw mount
+  * get user from clientconfig.depot.user
+
+-- detlef oertel <d.oertel@uib.de>  Tue, 20 Oct 2015 15:00:00 +0200
+
+opsi-clonezilla (4.0.6-1) stable; urgency=low
+
+  * 4.0.6 bootimage support
+  * clonezilla-3.10.11
+  * partclone-0.2.69
+  * postinst cleared
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 24 Jul 2015 16:01:53 +0200
+
+opsi-clonezilla (4.0.5-5) stable; urgency=low
+
+  * Added additional debug output.
+
+-- Niko Wenselowski <n.wenselowsi@uib.de>  Tue, 03 Nov 2014 14:43:17 +0200
+
+opsi-clonezilla (4.0.5-4) stable; urgency=low
+
+  * Fix indentation problem introduced with last bugfix.
+
+-- Niko Wenselowski <n.wenselowsi@uib.de>  Tue, 30 Oct 2014 09:18:17 +0200
+
+opsi-clonezilla (4.0.5-3) stable; urgency=low
+
+  * Fix index out of range error.
+
+-- Niko Wenselowski <n.wenselowsi@uib.de>  Tue, 28 Oct 2014 09:58:17 +0200
+
+opsi-clonezilla (4.0.5-2) stable; urgency=low
+
+  * new property setup_after_install
+  * new property architecture
+  * pxeConfigTemplate: install3264
+  * runcommand.encode('utf-8') fixes: #1158 (https://forum.opsi.org/viewtopic.php?f=6&t=6756)
+
+-- detlef oertel <d.oertel@uib.de>  Fri, 29 Aug 2014 16:01:53 +0200
+
+opsi-clonezilla (4.0.5-1) experimental; urgency=low
+
+  * downgrade clonezilla to version from old bootimage
+
+ -- erol ueluekmen <e.ueluekmen@uib.de>  Tue, 07 Aug 2014 03:22:00 +0200
+
+opsi-clonezilla (3.10.25-3) experimental; urgency=low
+
+  * clonezilla updated to 3.10.25
+
+ -- erol ueluekmen <e.ueluekmen@uib.de>  Tue, 23 Jul 2014 15:02:00 +0200
+
+opsi-clonezilla (3.10.11-3) experimental; urgency=low
+
+  * Modfified for new precise opsi-linux-bootimage
+  * updated to clonezilla version 3.10.11
+    * clonezilla paths has changed
+  * Needs now opsi-linux-bootimage >= 20140717
+  * repair-ocs-path.py added to opsi-clonezilla
+  * test.py removed
+  * removed absolute path from runCommand
+
+ -- erol ueluekmen <e.ueluekmen@uib.de>  Tue, 23 Jul 2014 15:02:00 +0200
+
+opsi-clonezilla (2.0.1-4) testing; urgency=low
+
+  * new property rebootflag
+
+ -- bardo wolf uib gmbh <info@uib.de>  15 Aug 2013
+
+opsi-clonezilla (2.0.1-3) testing; urgency=low
+
+  * new property drbl_ocs_conf to patch entries in /opt/drbl/conf/drbl-ocs.conf
+
+ -- uib gmbh <info@uib.de>  Tue, 28 May 2013 17:42:45 +0000
+
+opsi-clonezilla (2.0.1-2) testing; urgency=low
+
+  * new property imagefile: will replace the string 'imagefile' in the runcommand
+  * sending clonezilla output to log and integrate the out put to bootimag log
+
+ -- uib gmbh <info@uib.de>  Tue, 30 Apr 2013 17:42:45 +0000
+
+opsi-clonezilla (2.0.1-1) testing; urgency=low
+
+  * Initial package
+
+ -- uib gmbh <info@uib.de>  Tue, 19 Feb 2013 17:42:45 +0000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
